@@ -4,6 +4,8 @@ import { FaPen, FaTrash } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import { Loading } from '../../components/Loading';
 import { Toast } from '../../components/Toast';
+import { validaPermissao, verificaTokenExpirado } from '../../service/token';
+import type { IToken } from '../../interfaces/token';
 
 interface IUsuarios {
     id: number;
@@ -18,6 +20,8 @@ export const Usuarios = () => {
     const [usuarios, setUsuarios] = useState<IUsuarios[]>([])
     const [isLoading, setIsLoading] = useState(false)
 
+    const [token, setToken] = useState<IToken>()
+
     const [showToast, setShowToast] = useState(false)
     const [messageToast, setMessageToast] = useState('')
     const [corToast, setCorToast] = useState('')
@@ -27,11 +31,17 @@ export const Usuarios = () => {
 
         let lsToken = localStorage.getItem('chopts:token')
 
-        let token: any = null;
+        let token: IToken | null = null;
 
         if (typeof lsToken === 'string') {
-            navigate('/')
+            token = JSON.parse(lsToken)
+            setToken(token!)
+                 
         }
+        if (!token || verificaTokenExpirado(token.accessToken)) {
+            navigate('/') 
+        }
+
 
         setIsLoading(true)
         axios.get('http://localhost:3001/users')
@@ -85,6 +95,8 @@ export const Usuarios = () => {
                 }}
             >
                 <h1>Usuarios</h1>
+                {
+                    validaPermissao(token?.user.permissoes,['admin']) && (
                 <button
                     type="button"
                     className="btn btn-success"
@@ -94,6 +106,7 @@ export const Usuarios = () => {
                 >
                     Adicionar
                 </button>
+                )}
             </div>
             <table className="table">
                 <thead>

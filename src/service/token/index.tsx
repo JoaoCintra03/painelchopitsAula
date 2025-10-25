@@ -14,3 +14,22 @@ export const verificaTokenExpirado = (token?: string) => {
         return false
     }
 }
+
+
+export const validaPermissao = (
+    permissaoToken: string |undefined,
+    permissao: Array<string>
+) => {
+    if (permissaoToken) {
+
+        if (typeof permissaoToken === 'string') {
+            const temAlgumaPermissao = permissao.includes(permissaoToken)
+
+            return temAlgumaPermissao
+
+        }
+
+        return false
+    }
+    return false
+}

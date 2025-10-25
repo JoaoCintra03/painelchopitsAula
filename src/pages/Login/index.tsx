@@ -32,10 +32,8 @@ export default function Login() {
                         'chopts:token',
                         JSON.stringify(resposta.data)
                     )
-
-                    console.log(resposta.data)
-
                     navigate('/usuarios')
+
                 })
                 .catch((err) => {
                     console.log(err)
